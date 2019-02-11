@@ -20,6 +20,8 @@ class MainActivity : AppCompatActivity(){
     private var cursor: Cursor? = null
 
     private var mTimer: Timer? = null
+    private var mHandler = Handler()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,11 +81,11 @@ class MainActivity : AppCompatActivity(){
         pause_button.setOnClickListener {
             if (mTimer == null) {
                 mTimer = Timer()
-                pause_button.text = String.format("再生")
+                pause_button.text = String.format("停止")
                 mTimer!!.schedule(object : TimerTask() {
                     override fun run() {
-                        if (!cursor!!.moveToPrevious()) {
-                            cursor!!.moveToLast()
+                        if (!cursor!!.moveToNext()) {
+                            cursor!!.moveToFirst()
                             // 次に進めないので、一番最初にcursorを戻す
                         }
 
@@ -96,9 +98,18 @@ class MainActivity : AppCompatActivity(){
                     }
 
 
+
                     }
 
                 }, 2000, 2000) // 最初に始動させるまで 100ミリ秒、ループの間隔を 100ミリ秒 に設定
+                next_button.setEnabled(false)
+                return_button.setEnabled(false)
+            }else{
+                pause_button.text = String.format("再生")
+                mTimer!!.cancel()
+                mTimer = null
+                next_button.setEnabled(true)
+                return_button.setEnabled(true)
             }
 
         }
